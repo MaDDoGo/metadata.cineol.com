@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scraper framework="1.1" date="2010-01-07">
+	<NFOurl dest="3">
+		<RegExp input="$$1" output="&lt;url&gt;http://www.cineol.net/pelicula/\1&lt;/url&gt;" dest="3">
+			<expression noclean="1">http://www.cineol.net/pelicula/(.*)</expression>
+		</RegExp>
+	</NFOurl>
+	<CreateSearchUrl SearchStringEncoding="iso-8859-1" dest="3">
+		<RegExp input="$$5" output="http://www.cineol.net/search.php?search=\1&amp;select=1&amp;button=Buscar" dest="3">
+			<!--Ponemos + en vez de espacios-->
+			<RegExp input="$$1" output="\1" dest="5">
+				<expression repeat="yes">([^ ,]+)</expression>
+			</RegExp>
+			<expression noclean="1" />
+		</RegExp>
+	</CreateSearchUrl>
+	<GetSearchResults dest="8">
+		<RegExp input="$$5" output="&lt;?xml version=&quot;1.0&quot; encoding=&quot;iso-8859-1&quot; standalone=&quot;yes&quot;?&gt;&lt;results&gt;\1&lt;/results&gt;" dest="8">
+			<RegExp input="$$1" output="&lt;entity&gt;&lt;title&gt;\2 (\3)&lt;/title&gt;&lt;url&gt;http://www.cineol.net/pelicula/\1&lt;/url&gt;&lt;/entity&gt;" dest="5">
+				<expression repeat="yes" noclean="1">&lt;h3&gt;&lt;a href="pelicula/([^"]*)"&gt;([^&lt;]*).*?Director:.&lt;/strong&gt;[^&gt;]*&gt;([^&lt;]*)&lt;</expression>
+			</RegExp>
+			<expression noclean="1" />
+		</RegExp>
+	</GetSearchResults>
+	<GetDetails dest="3">
+		<RegExp input="$$5" output="&lt;details&gt;\1&lt;/details&gt;" dest="3">
+			<RegExp input="$$1" output="&lt;title&gt;\1&lt;/title&gt;" dest="5">
+				<expression>&lt;div class="cab-ficha" id="cab-ficha-pelicula"&gt;.*&lt;h1&gt;([^&lt;]*)</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;year&gt;\1&lt;/year&gt;" dest="5+">
+				<expression>Año:&lt;/strong&gt;.([0-9]*)[^&lt;]*</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;director&gt;\1&lt;/director&gt;" dest="5+">
+				<expression>Dirección: &lt;/strong&gt;[^&gt;]*&gt;([^&lt;]*)</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;genre&gt;\1&lt;/genre&gt;" dest="5+">
+				<expression repeat="yes">href="/top-cineol.php\?type=5&amp;genero=."&gt;([^&lt;]*)&lt;/a&gt;</expression>
+			</RegExp>
+			<RegExp input="$$8" output="&lt;credits&gt;\1&lt;/credits&gt;" dest="5+">
+				<RegExp input="$$1" output="\1" dest="8">
+					<expression noclean="1">&lt;li&gt;&lt;strong&gt;Producción:(.*)&lt;/a&gt; &lt;/li&gt;</expression>
+				</RegExp>
+				<expression repeat="yes" noclean="1">gente/[^&gt;]*&gt;([^&lt;]*)</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;country&gt;\1&lt;/country&gt;" dest="5+">
+				<expression>País:&lt;/strong&gt; ([^&lt;]*)&lt;/li&gt;</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;runtime&gt;\1 min&lt;/runtime&gt;" dest="5+">
+				<expression>Duración&lt;/strong&gt;: ([0-9]*)</expression>
+			</RegExp>
+			<RegExp input="$$8" output="&lt;credits&gt;\1&lt;/credits&gt;" dest="5+">
+				<RegExp input="$$1" output="\1" dest="8">
+					<expression noclean="1">&lt;li&gt;&lt;strong&gt;Guión:(.*)&lt;/a&gt; &lt;/li&gt;</expression>
+				</RegExp>
+				<expression repeat="yes">gente/[^&gt;]*&gt;([^&lt;]*)</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;originaltitle&gt;\1&lt;/originaltitle&gt;" dest="5+">
+				<expression>Título Original&lt;/strong&gt;: ([^&lt;]*)</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;premiered&gt;\1&lt;/premiered&gt;" dest="5+">
+				<expression>Estreno en España:[^&gt;]*&gt;([^&lt;]*)</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;rating&gt;\1.\2&lt;/rating&gt;" dest="5+">
+				<expression>id="current-rating"&gt;([0-9]).([0-9]*)</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;votes&gt;\1&lt;/votes&gt;" dest="5+">
+				<expression>([0-9]*) votos</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;plot&gt;\1&lt;/plot&gt;" dest="5+">
+				<expression>&lt;h2&gt;Sinopsis&lt;/h2&gt;[^&gt;]*&gt;([^&lt;]*)</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;studio&gt;\1&lt;/studio&gt;" dest="5+">
+				<expression>Distribuidora:[^&gt;]*&gt;([^&lt;]*)</expression>
+			</RegExp>
+			<RegExp input="$$1" output="&lt;actor&gt;&lt;name&gt;\1&lt;/name&gt;&lt;role&gt;\2&lt;/role&gt;&lt;/actor&gt; " dest="5+">
+				<expression repeat="yes">&lt;a.href="gente[^"]*"&gt;([^&lt;]*)&lt;/a&gt;&lt;td&gt;([^&lt;]*)&lt;/td&gt;</expression>
+			</RegExp>
+			<RegExp input="$$9" output="&lt;url function=&quot;GoogleToIMDB&quot;&gt;http://www.google.com/search?q=site:imdb.com\1&lt;/url&gt;" dest="5+">
+				<RegExp input="$$8" output="+\1" dest="9">
+					<RegExp input="$$1" output="\1" dest="8">
+						<expression>Título Original&lt;/strong&gt;: ([^&lt;]*)</expression>
+					</RegExp>
+					<expression repeat="yes">([^ ,]+)</expression>
+				</RegExp>
+				<RegExp input="$$1" output="+\1" dest="9+">
+					<expression repeat="yes">Año:&lt;/strong&gt;.([0-9]*)[^&lt;]*</expression>
+				</RegExp>
+				<expression />
+			</RegExp>
+			<RegExp conditional="PosterIndexDVD" input="$$9" output="&lt;url function=&quot;LinkIndexDVD&quot;&gt;http://www.google.com/search?q=site:index-dvd.com\1+Poster+Cine&lt;/url&gt;" dest="5+">
+				<RegExp input="$$8" output="+\1" dest="9">
+					<RegExp input="$$1" output="\1" dest="8">
+						<expression>Título Original&lt;/strong&gt;: ([^&lt;]*)</expression>
+					</RegExp>
+					<expression repeat="yes">([^ ,]+)</expression>
+				</RegExp>
+				<RegExp input="$$1" output="+\1" dest="9+">
+					<expression repeat="yes">Año:&lt;/strong&gt;.([0-9]*)[^&lt;]*</expression>
+				</RegExp>
+				<expression />
+			</RegExp>
+			<expression noclean="1" />
+		</RegExp>
+	</GetDetails>
+	<GoogleToIMDB dest="3">
+		<RegExp input="$$5" output="&lt;details&gt;\1&lt;/details&gt;" dest="3+">
+			<RegExp input="$$1" output="\1" dest="6">
+				<expression noclean="1">/title/tt([0-9]*)</expression>
+			</RegExp>
+			<RegExp input="" output="&lt;id&gt;tt$$6&lt;/id&gt;" dest="5">
+				<expression noclean="1" />
+			</RegExp>
+			<RegExp conditional="ActivarFanart" input="" output="&lt;url function=&quot;GetTMDBFanartById&quot;&gt;http://www.imdb.com/title/tt$$6&lt;/url&gt;" dest="5+">
+				<expression />
+			</RegExp>
+			<RegExp conditional="PosterIMPAwards" input="" output="&lt;url function=&quot;GetIMPALink&quot;cache=&quot;$$2.html&quot;&gt;http://www.imdb.com/title/tt$$6/posters&lt;/url&gt;" dest="5+">
+				<expression />
+			</RegExp>
+			<RegExp conditional="PosterMPDB" input="" output="&lt;url function=&quot;GetMoviePosterDBLink&quot;&gt;http://www.movieposterdb.com/browse/search?type=movies&amp;amp;query=$$6&lt;/url&gt;" dest="5+">
+				<expression />
+			</RegExp>
+			<RegExp conditional="EnableFullCast" input="" output="&lt;url function=&quot;GetIMDBCast&quot;&gt;http://www.imdb.com/title/tt$$6/fullcredits&lt;/url&gt;" dest="5+">
+				<expression />
+			</RegExp>
+			<RegExp conditional="!EnableFullCast" input="" output="&lt;url function=&quot;GetIMDBCast&quot;&gt;http://www.imdb.com/title/tt$$6&lt;/url&gt;" dest="5+">
+				<expression />
+			</RegExp>
+			<RegExp conditional="ExtraiMDB" input="" output="&lt;url function=&quot;GetImdbStuff&quot;&gt;http://www.imdb.com/title/tt$$6&lt;/url&gt;" dest="5+">
+				<expression />
+			</RegExp>
+			<expression noclean="1" />
+		</RegExp>
+	</GoogleToIMDB>
+	<LinkIndexDVD dest="3">
+		<RegExp input="$$1" output="&lt;details&gt;&lt;url function=&quot;CaratulaIndexDVD&quot;&gt;http://www.index-dvd.com\1&lt;/url&gt;&lt;/details&gt;" dest="3">
+			<expression noclean="1">http://www.index-dvd.com([^"]*)</expression>
+		</RegExp>
+	</LinkIndexDVD>
+	<CaratulaIndexDVD dest="3">
+		<RegExp input="$$1" output="&lt;details&gt;&lt;thumb&gt;http://www.index-dvd.com/covers/600/\1&lt;/thumb&gt;" dest="3">
+			<expression noclean="1">http://www.index-dvd.com/covers/600/([^']*)</expression>
+		</RegExp>
+		<RegExp input="$$1" output="&lt;studio&gt;\1&lt;/studio&gt;" dest="3+">
+			<expression>Distribuye: ([^']*)</expression>
+		</RegExp>
+		<RegExp input="$$1" output="&lt;mpaa&gt;\1&lt;/mpaa&gt;&lt;/details&gt;" dest="3+">
+			<expression>width='13' height='11' title='([^']*)</expression>
+		</RegExp>
+	</CaratulaIndexDVD>
+</scraper>

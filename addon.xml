@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="metadata.cineol.com"
+       name="CinEOL"
+       version="0.1"
+       provider-name="MaDDoGo">
+  <requires>
+    <import addon="xbmc.metadata" version="1.0"/>
+    <import addon="metadata.common.themoviedb.org" version="1.0"/>
+    <import addon="metadata.common.movieposterdb.com" version="1.0"/>
+    <import addon="metadata.common.impa.com" version="1.0"/>
+    <import addon="metadata.common.imdb.com" version="1.0"/>
+  </requires>
+  <extension point="xbmc.metadata.scraper.movies"
+             language="es"
+             library="cineol.xml"/>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="es">Scraper de Películas de Filmaffinity</summary>
+    <description lang="es">Scraper que usa la página web www.cineol.com para descargar información de películas en español, ayudándose de varias páginas para ampliar la información.</description>
+    <platform>all</platform>
+  </extension>
+</addon>
